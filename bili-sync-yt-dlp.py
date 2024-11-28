@@ -57,6 +57,7 @@ async def get_video_info(media_id,bvid):
         info['title'] = (await v.get_info())['title']
         info['pages'] = len((await v.get_info())['pages'])
         info['dynamic'] = (await v.get_info())['dynamic'] 
+        info['upname'] = ((await v.get_info())['owner'])['name']
     except Exception:
         # 失效的视频添加到已经下载集合
         already_download_bvids_add(media_id=media_id,bvid=bvid)
@@ -140,8 +141,9 @@ def check_updates_download():
                 video_info = asyncio_run(get_video_info(media_id,bvid)) # 获取视频信息
                 if len(video_info)>0: # 仅下载可以获取到信息的视频
                     video_name = video_info['title']
+                    video_upname = video_info["upname"]
                     # 定义视频文件夹路径
-                    video_dir = path.join(download_path, video_name)
+                    video_dir = path.join(download_path, upname, video_name)
                     # 判断文件夹是否存在，不存在则创建
                     if not path.exists(video_dir):
                         makedirs(video_dir)
