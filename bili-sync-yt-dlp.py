@@ -16,6 +16,8 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
 media_id_list = list(bili_sync_config['favorite_list'].keys())
 # 间隔时间
 interval = bili_sync_config['interval']
+# 用于身份认证,window.localStorage.ac_time_value
+credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], buvid3=bili_sync_config['credential']['buvid3'], dedeuserid=bili_sync_config['credential']['dedeuserid'], ac_time_value=bili_sync_config['credential']['ac_time_value'])
 # 需要下载的视频
 need_download_bvids = dict()
 
@@ -85,6 +87,8 @@ def download_video(media_id,bvid,download_path):
     except CalledProcessError:
         print(f"[error] {download_path} 下载失败")
 
+# 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
+def save_cookies_to_txt():
     # 获取cookies信息
     cookies = bili_sync_config.get('credential', {})
     # 创建yt-dlp识别的cookies格式
@@ -112,6 +116,8 @@ def already_download_bvids_add(media_id,bvid):
 
 # 初始化
 def init_download():
+    # 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
+    save_cookies_to_txt() 
     # 根据收藏夹id初始化字典数据
     for media_id in media_id_list:
         need_download_bvids.setdefault(media_id, set())
