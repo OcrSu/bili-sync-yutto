@@ -16,8 +16,6 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
 media_id_list = list(bili_sync_config['favorite_list'].keys())
 # 间隔时间
 interval = bili_sync_config['interval']
-# 用于身份认证,window.localStorage.ac_time_value
-credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], buvid3=bili_sync_config['credential']['buvid3'], dedeuserid=bili_sync_config['credential']['dedeuserid'], ac_time_value=bili_sync_config['credential']['ac_time_value'])
 # 需要下载的视频
 need_download_bvids = dict()
 
@@ -74,19 +72,10 @@ def download_video(media_id,bvid,download_path):
     """
     video_url = "https://www.bilibili.com/video/"+bvid # 使用bvid拼接出视频的下载地址
     command = [
-        "yt-dlp", # 调用yt-dlp已经下载的视频会自动跳过
-        "-f", "bestvideo+bestaudio/best",video_url, # 最高画质下载视频
-        "--write-thumbnail", # 下载视频的缩略图或海报图片并保存为单独的文件
-        "--write-description", #下载视频的简介
-        "--write-info-json",#下载视频的元数据
-        "-r", "4096K", #限制下载速度
-        # "--embed-thumbnail" # 先下载缩略图或海报图片，并将它嵌入到视频文件中（如果视频格式支持），需要ffmpeg
-        #"--external-downloader", "aria2c", # 启用aria2，将支持aria2的特性断点续传和多线程
-       # "--external-downloader-args", "-x 4 -k 1m", # aria2线程等参数设置
-        "--cookies", path.expanduser("~/.config/bili-sync/cookies.txt"), # cookies读取
-        "-P", download_path, # 指定存放视频的文件夹路径
-        "--restrict-filenames", # 自动限制文件名中的字符，使其符合文件系统的要求
-        "-o", "[%(uploader)s][%(id)s].%(ext)s" # 限制文件名称长度
+        "yutto", # 调用yt-dlp已经下载的视频会自动跳过
+        "--download-interval","5", 
+        "--with-metadata", "true",
+        "-d", download_path, # 指定存放视频的文件夹路径
     ]
     try:
         subprocess_run(command, check=True)
@@ -96,8 +85,6 @@ def download_video(media_id,bvid,download_path):
     except CalledProcessError:
         print(f"[error] {download_path} 下载失败")
 
-# 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
-def save_cookies_to_txt():
     # 获取cookies信息
     cookies = bili_sync_config.get('credential', {})
     # 创建yt-dlp识别的cookies格式
@@ -125,8 +112,6 @@ def already_download_bvids_add(media_id,bvid):
 
 # 初始化
 def init_download():
-    # 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
-    save_cookies_to_txt() 
     # 根据收藏夹id初始化字典数据
     for media_id in media_id_list:
         need_download_bvids.setdefault(media_id, set())
