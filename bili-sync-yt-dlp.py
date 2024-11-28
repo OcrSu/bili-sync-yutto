@@ -83,7 +83,7 @@ def download_video(media_id,bvid,download_path):
         "--cookies", path.expanduser("~/.config/bili-sync/cookies.txt"), # cookies读取
         "-P", download_path, # 指定存放视频的文件夹路径
         "--restrict-filenames", # 自动限制文件名中的字符，使其符合文件系统的要求
-        "-o", "%(title).50s [%(id)s].%(ext)s" # 限制文件名称长度
+        "-o", "[%(uploader)s][%(id)s].%(ext)s" # 限制文件名称长度
     ]
     try:
         subprocess_run(command, check=True)
@@ -143,7 +143,7 @@ def check_updates_download():
                     video_name = video_info['title']
                     video_upname = video_info["upname"]
                     # 定义视频文件夹路径
-                    video_dir = path.join(download_path, upname, video_name)
+                    video_dir = path.join(download_path, video_upname, video_name)
                     # 判断文件夹是否存在，不存在则创建
                     if not path.exists(video_dir):
                         makedirs(video_dir)
