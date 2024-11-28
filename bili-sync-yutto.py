@@ -83,7 +83,9 @@ def download_video(media_id,bvid,download_path):
         "--vip-strict", 
         "--login-strict", 
         "--download-interval", 
-        "5"
+        "5",
+        "--banned-mirrors-pattern",
+        "mirrorali"
     ]
     try:
         subprocess_run(command, check=True)
