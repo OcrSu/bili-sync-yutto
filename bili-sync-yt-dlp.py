@@ -79,7 +79,11 @@ def download_video(media_id,bvid,download_path):
         video_url, 
         "-c", signdate, 
         "-d", download_path, 
-        "--with-metadata"
+        "--with-metadata", 
+        "--vip-strict", 
+        "--login-strict", 
+        "--download-interval", 
+        "5"
     ]
     try:
         subprocess_run(command, check=True)
