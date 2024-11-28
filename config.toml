@@ -1,4 +1,4 @@
-interval = 1200
+interval = 3600
 
 [credential]
 sessdata = ""
