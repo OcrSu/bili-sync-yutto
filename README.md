@@ -2,22 +2,20 @@
 
 # 使用方法
 
-【bili-sync-yt-dlp下载b站视频】 https://www.bilibili.com/video/BV1e9WVemEWV/?share_source=copy_web&vd_source=d34abe3786a6b85ecc07875a85795885
-
 目前只有 Linux/amd64 平台可使用 Docker 或 Docker Compose 运行，其他平台请[自行编译](#Dockerfile编译运行)，此处以 Compose 为例：
 
 ```yml
 services:
-  bili-sync-yt-dlp:
-    image: cap153/bili-sync-yt-dlp:latest
+  bili-sync-yutto:
+    image: suyiyi/bili-sync-yutto:latest
     restart: unless-stopped
     network_mode: bridge
-    hostname: bili-sync-yt-dlp
-    container_name: bili-sync-yt-dlp
+    hostname: bili-sync-yutto
+    container_name: bili-sync-yutto
     volumes:
       - ${你希望存储程序配置的目录}:/app/.config/bili-sync
       # 还需要有视频下载位置
-      # 这些目录不是固定的，只需要确保此处的挂载与 bili-sync-yt-dlp 的配置文件相匹配
+      # 这些目录不是固定的，只需要确保此处的挂载与 bili-sync-yutto 的配置文件相匹配
 ```
 
 # 配置文件
@@ -70,13 +68,13 @@ ac_time_value = ""
 
 ```bash
 # 下载最新源码
-git clone --depth 1 https://github.com/cap153/bili-sync-yt-dlp
+git clone --depth 1 https://github.com/suyiyi/bili-sync-yutto
 # 进入项目目录
-cd bili-sync-yt-dlp
+cd bili-sync-yutto
 # 构建docker镜像
-docker build -t bili-sync-yt-dlp ./
+docker build -t bili-sync-yutto ./
 # 创建容器并运行，自行修改相关参数
-docker run -it --restart=always --name bili-sync-yt-dlp  -v <配置文件路径>:/app/.config/bili-sync -v <视频想保存的路径>:<配置文件写的收藏夹路径> bili-sync-yt-dlp
+docker run -it --restart=always --name bili-sync-yutto  -v <配置文件路径>:/app/.config/bili-sync -v <视频想保存的路径>:<配置文件写的收藏夹路径> bili-sync-yutto
 ```
 
 # 源码运行
@@ -88,13 +86,13 @@ docker run -it --restart=always --name bili-sync-yt-dlp  -v <配置文件路径>
 5. 配置文件请放在如下路径`~/.config/bili-sync/config.toml`
 
 ```bash
-git clone --depth 1 https://github.com/cap153/bili-sync-yt-dlp
+git clone --depth 1 https://github.com/suyiyi/bili-sync-yutto
 # 进入项目目录
-cd bili-sync-yt-dlp
+cd bili-sync-yutto
 # 安装依赖
 pip install -r requirements.txt
 # 运行代码
-python bili-sync-yt-dlp.py
+python bili-sync-yutto.py
 ```
 
 
