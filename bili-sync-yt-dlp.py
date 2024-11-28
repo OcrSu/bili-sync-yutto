@@ -75,6 +75,7 @@ def download_video(media_id,bvid,download_path):
     video_url = "https://www.bilibili.com/video/"+bvid # 使用bvid拼接出视频的下载地址
     command = [
         "yutto", # 调用yt-dlp已经下载的视频会自动跳过
+        "--config", "~/.config/bili-sync/config2.toml"
         "--download-interval","5", 
         "--with-metadata", "true",
         "-d", download_path, # 指定存放视频的文件夹路径
