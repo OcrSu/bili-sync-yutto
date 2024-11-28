@@ -11,4 +11,4 @@ pip install --no-cache-dir -r requirements.txt && \
 pip install --pre yutto && \
 rm -rf /var/cache/apk/
 
-CMD [ "python", "bili-sync-yt-dlp.py" ]
+CMD [ "python", "bili-sync-yutto.py" ]
