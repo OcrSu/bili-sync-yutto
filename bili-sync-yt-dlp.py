@@ -16,6 +16,7 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
 media_id_list = list(bili_sync_config['favorite_list'].keys())
 # 间隔时间
 interval = bili_sync_config['interval']
+interval_download = bili_sync_config['interval_download']
 # 用于身份认证,window.localStorage.ac_time_value
 credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], buvid3=bili_sync_config['credential']['buvid3'], dedeuserid=bili_sync_config['credential']['dedeuserid'], ac_time_value=bili_sync_config['credential']['ac_time_value'])
 # 需要下载的视频
@@ -148,6 +149,8 @@ def check_updates_download():
                     if not path.exists(video_dir):
                         makedirs(video_dir)
                     download_video(media_id,bvid,video_dir)
+                    print(f"[info] {interval}秒后执行下一轮")
+                    sleep(interval_download)
             # 对比已经下载的数据批量更新需要下载的数据
             for bvid in already_download_bvids(media_id):
                 try: # 如果need_download_bvids不存在该bvid表示已经更新过数据，直接跳过
