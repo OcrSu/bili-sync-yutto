@@ -16,6 +16,7 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
 media_id_list = list(bili_sync_config['favorite_list'].keys())
 # 间隔时间
 interval = bili_sync_config['interval']
+signdate = bili_sync_config['credential']['sessdata']
 # 用于身份认证,window.localStorage.ac_time_value
 credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], buvid3=bili_sync_config['credential']['buvid3'], dedeuserid=bili_sync_config['credential']['dedeuserid'], ac_time_value=bili_sync_config['credential']['ac_time_value'])
 # 需要下载的视频
@@ -74,11 +75,11 @@ def download_video(media_id,bvid,download_path):
     """
     video_url = "https://www.bilibili.com/video/"+bvid # 使用bvid拼接出视频的下载地址
     command = [
-        "yutto", # 调用yt-dlp已经下载的视频会自动跳过
-        "--config", "/vol2/1000/Configs/BiliBili_Sync/config2.toml"
-        "--download-interval","5", 
-        "--with-metadata", "true",
-        "-d", download_path, # 指定存放视频的文件夹路径
+        "yutto",
+        video_url, 
+        "-c", signdate, 
+        "-d", download_path, 
+        "--with-metadata"
     ]
     try:
         subprocess_run(command, check=True)
@@ -87,23 +88,6 @@ def download_video(media_id,bvid,download_path):
         print(f"[info] {download_path} 下载成功")
     except CalledProcessError:
         print(f"[error] {download_path} 下载失败")
-
-# 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
-def save_cookies_to_txt():
-    # 获取cookies信息
-    cookies = bili_sync_config.get('credential', {})
-    # 创建yt-dlp识别的cookies格式
-    cookies_lines = [
-        f"# Netscape HTTP Cookie File",
-        f"# This is a generated file! Do not edit.",
-        "",
-    ]
-    for name, value in cookies.items():
-        if value:
-            cookies_lines.append(f".bilibili.com\tTRUE\t/\tFALSE\t0\t{name.upper()}\t{value}")
-    # 保存到cookies.txt文件
-    with open(path.expanduser("~/.config/bili-sync/cookies.txt"), 'w', encoding='utf-8') as f:
-        f.write("\n".join(cookies_lines))
 
 # 数据库读取已经下载的视频bvids
 def already_download_bvids(media_id):
@@ -117,8 +101,6 @@ def already_download_bvids_add(media_id,bvid):
 
 # 初始化
 def init_download():
-    # 把bili-sync配置文件中的cookies信息保存为yt-dlp可以识别的格式
-    save_cookies_to_txt() 
     # 根据收藏夹id初始化字典数据
     for media_id in media_id_list:
         need_download_bvids.setdefault(media_id, set())
