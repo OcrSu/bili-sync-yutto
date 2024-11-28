@@ -77,6 +77,9 @@ def download_video(media_id,bvid,download_path):
         "yt-dlp", # 调用yt-dlp已经下载的视频会自动跳过
         "-f", "bestvideo+bestaudio/best",video_url, # 最高画质下载视频
         "--write-thumbnail", # 下载视频的缩略图或海报图片并保存为单独的文件
+        "--write-description", #下载视频的简介
+        "--write-info-json",#下载视频的元数据
+        "-r",4096K #限制下载速度
         # "--embed-thumbnail" # 先下载缩略图或海报图片，并将它嵌入到视频文件中（如果视频格式支持），需要ffmpeg
         #"--external-downloader", "aria2c", # 启用aria2，将支持aria2的特性断点续传和多线程
         #"--external-downloader-args", "-x 16 -k 1m", # aria2线程等参数设置
