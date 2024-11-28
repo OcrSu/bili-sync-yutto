@@ -78,8 +78,8 @@ def download_video(media_id,bvid,download_path):
         "-f", "bestvideo+bestaudio/best",video_url, # 最高画质下载视频
         "--write-thumbnail", # 下载视频的缩略图或海报图片并保存为单独的文件
         # "--embed-thumbnail" # 先下载缩略图或海报图片，并将它嵌入到视频文件中（如果视频格式支持），需要ffmpeg
-        "--external-downloader", "aria2c", # 启用aria2，将支持aria2的特性断点续传和多线程
-        "--external-downloader-args", "-x 16 -k 1m", # aria2线程等参数设置
+        #"--external-downloader", "aria2c", # 启用aria2，将支持aria2的特性断点续传和多线程
+        #"--external-downloader-args", "-x 16 -k 1m", # aria2线程等参数设置
         "--cookies", path.expanduser("~/.config/bili-sync/cookies.txt"), # cookies读取
         "-P", download_path, # 指定存放视频的文件夹路径
         "--restrict-filenames", # 自动限制文件名中的字符，使其符合文件系统的要求
