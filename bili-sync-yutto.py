@@ -122,9 +122,8 @@ def check_updates_download():
             # 获取未失效的视频信息并下载
             for bvid in need_download_bvids[media_id].copy(): # 遍历的时候使用copy()方法创建副本，这样即使在迭代过程中修改了原集合，也不会影响到迭代器
                 video_info = asyncio_run(get_video_info(media_id,bvid)) # 获取视频信息
-                print(video_info)
-                print(f"[info] {"5"}秒后开始下载")
-                sleep(5)
+                print(f"[info] {"10"}秒后开始下载")
+                sleep(10)
                 if len(video_info)>0: # 仅下载可以获取到信息的视频
                     video_name = video_info['title']
                     video_upname = video_info["upname"]
@@ -134,8 +133,8 @@ def check_updates_download():
                     if not path.exists(video_dir):
                         makedirs(video_dir)
                     download_video(media_id,bvid,video_dir)
-                    print(f"[info] {"10"}秒后下载下一个视频")
-                    sleep(10)
+                    print(f"[info] {"60"}秒后下载下一个视频")
+                    sleep(60)
             # 对比已经下载的数据批量更新需要下载的数据
             for bvid in already_download_bvids(media_id):
                 try: # 如果need_download_bvids不存在该bvid表示已经更新过数据，直接跳过
