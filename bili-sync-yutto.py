@@ -85,7 +85,7 @@ def download_video(media_id,bvid,download_path):
         "--banned-mirrors-pattern",
         "mirrorali",
         "-n", 
-        "2"
+        "1"
     ]
     try:
         subprocess_run(command, check=True)
