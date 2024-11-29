@@ -7,8 +7,6 @@ from toml import load
 from bilibili_api import Credential,video,favorite_list,settings
 from load_data import SQLiteManager
 
-# settings.proxy = "http://192.168.1.5:2080" # 里头填写你的代理地址
-settings.timeout = 300.0 # 超时时间设置久一点
 # 读取配置文件
 with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf-8') as f:
     bili_sync_config = load(f)
@@ -85,7 +83,9 @@ def download_video(media_id,bvid,download_path):
         "--download-interval", 
         "5",
         "--banned-mirrors-pattern",
-        "mirrorali"
+        "mirrorali",
+        "-n", 
+        "1"
     ]
     try:
         subprocess_run(command, check=True)
@@ -122,6 +122,9 @@ def check_updates_download():
             # 获取未失效的视频信息并下载
             for bvid in need_download_bvids[media_id].copy(): # 遍历的时候使用copy()方法创建副本，这样即使在迭代过程中修改了原集合，也不会影响到迭代器
                 video_info = asyncio_run(get_video_info(media_id,bvid)) # 获取视频信息
+                print(video_info)
+                print(f"[info] {"5"}秒后开始下载")
+                sleep(5)
                 if len(video_info)>0: # 仅下载可以获取到信息的视频
                     video_name = video_info['title']
                     video_upname = video_info["upname"]
@@ -131,7 +134,8 @@ def check_updates_download():
                     if not path.exists(video_dir):
                         makedirs(video_dir)
                     download_video(media_id,bvid,video_dir)
-                    print(f"[info] {interval}秒后执行下一轮")
+                    print(f"[info] {"10"}秒后下载下一个视频")
+                    sleep(10)
             # 对比已经下载的数据批量更新需要下载的数据
             for bvid in already_download_bvids(media_id):
                 try: # 如果need_download_bvids不存在该bvid表示已经更新过数据，直接跳过
