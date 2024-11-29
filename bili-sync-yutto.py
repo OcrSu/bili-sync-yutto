@@ -71,10 +71,9 @@ def download_video(media_id,bvid,download_path):
     :param bvid: 视频的bvid
     :param download_path: 存放视频的文件夹路径
     """
-    video_url = "https://www.bilibili.com/video/"+bvid # 使用bvid拼接出视频的下载地址
     command = [
         "yutto",
-        video_url, 
+        bvid, 
         "-c", signdate, 
         "-d", download_path, 
         "--with-metadata", 
