@@ -12,8 +12,7 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
     bili_sync_config = load(f)
 # 收藏夹的id列表
 media_id_list = list(bili_sync_config['favorite_list'].keys())
-credential = Credential(bili_sync_config['sessdata'])
-sessdata = bili_sync_config['sessdata']
+credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], dedeuserid=bili_sync_config['credential']['dedeuserid'])
 # 需要下载的视频
 need_download_bvids = dict()
 
@@ -133,8 +132,8 @@ def check_updates_download():
                     need_download_bvids[media_id].remove(bvid)
                 except KeyError:
                     pass
-        print(f"[info] {30}分钟后更新并同步收藏夹")
-        sleep(1800)
+        print(f"[info] {5}分钟后更新并同步收藏夹")
+        sleep(300)
 
 if __name__ == "__main__":
     init_download() # 第一次运行同步本地已经下载的视频信息
