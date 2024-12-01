@@ -1,5 +1,5 @@
 from time import sleep
-from os import path,makedirs
+from os import path
 from re import sub as sub
 from subprocess import CalledProcessError, run as subprocess_run
 from asyncio import run as asyncio_run
@@ -12,11 +12,8 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
     bili_sync_config = load(f)
 # 收藏夹的id列表
 media_id_list = list(bili_sync_config['favorite_list'].keys())
-# 间隔时间
-interval = bili_sync_config['interval']
-signdate = bili_sync_config['credential']['sessdata']
-# 用于身份认证,window.localStorage.ac_time_value
-credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], buvid3=bili_sync_config['credential']['buvid3'], dedeuserid=bili_sync_config['credential']['dedeuserid'], ac_time_value=bili_sync_config['credential']['ac_time_value'])
+credential = Credential(bili_sync_config['sessdata'])
+sessdata = bili_sync_config['sessdata']
 # 需要下载的视频
 need_download_bvids = dict()
 
@@ -31,7 +28,7 @@ async def get_bvids(media_id):
     try:
         ids = await fav_list.get_content_ids_info()
     except Exception as e:
-        print(f"发生错误: {e}，下一轮重试")
+        print(f"发生错误: {e}，下一次同步时重试")
         return
     for id in ids:
         # 未下载的新视频更新字典
@@ -54,8 +51,6 @@ async def get_video_info(media_id,bvid):
     info = dict()
     try:
         info['title'] = (await v.get_info())['title']
-        info['pages'] = len((await v.get_info())['pages'])
-        info['dynamic'] = (await v.get_info())['dynamic'] 
         info['upname'] = ((await v.get_info())['owner'])['name']
     except Exception:
         # 失效的视频添加到已经下载集合
@@ -63,24 +58,25 @@ async def get_video_info(media_id,bvid):
         print(bvid+"视频失效")
     return info
 
-def download_video(media_id,bvid,download_path):
+def download_video(media_id,bvid,video_dir):
     """
-    使用 yt-dlp 下载视频。
-
+    使用 yutto 下载视频。
     :param media_id: 收藏夹的id
     :param bvid: 视频的bvid
-    :param download_path: 存放视频的文件夹路径
+    :param video_dir: 存放视频的文件夹路径
     """
     command = [
         "yutto",
         bvid, 
-        "-c", signdate, 
-        "-d", download_path, 
+        "-b", 
+        "-c", sessdata, 
+        "-d", video_dir, 
+        "-tp", "{name}", 
         "--with-metadata", 
         "--vip-strict", 
         "--login-strict", 
         "--download-interval", 
-        "5",
+        "30",
         "--banned-mirrors-pattern",
         "mirrorali",
         "-n", 
@@ -90,9 +86,9 @@ def download_video(media_id,bvid,download_path):
         subprocess_run(command, check=True)
         # 下载成功，更新字典数据
         already_download_bvids_add(media_id=media_id,bvid=bvid)
-        print(f"[info] {download_path} 下载成功")
+        print(f"[info] {video_dir} 视频下载成功")
     except CalledProcessError:
-        print(f"[error] {download_path} 下载失败")
+        print(f"[error] {video_dir} 视频下载失败")
 
 # 数据库读取已经下载的视频bvids
 def already_download_bvids(media_id):
@@ -119,29 +115,26 @@ def check_updates_download():
             # 获取收藏夹中未下载的视频的bvid
             asyncio_run(get_bvids(media_id))
             # 获取未失效的视频信息并下载
-            for bvid in need_download_bvids[media_id].copy(): # 遍历的时候使用copy()方法创建副本，这样即使在迭代过程中修改了原集合，也不会影响到迭代器
+            for bvid in need_download_bvids[media_id].copy(): 
+            # 遍历的时候使用copy()方法创建副本，这样即使在迭代过程中修改了原集合，也不会影响到迭代器
                 video_info = asyncio_run(get_video_info(media_id,bvid)) # 获取视频信息
-                print(f"[info] {"10"}秒后开始下载")
-                sleep(10)
+                upname = video_info["upname"]
+                videotitle = video_info["title"]
+                video_dir = path.join(download_path, upname, videotitle.replace(':', '-').replace('|', '♥️').replace('"', '⚡').replace('/', '_').replace('<', '-').replace('>', '-').replace('?', '.').replace('*', '♥️'))
+                print(f"[info] {"60"}秒后开始下载")
+                sleep(60)
                 if len(video_info)>0: # 仅下载可以获取到信息的视频
-                    video_name = video_info['title']
-                    video_upname = video_info["upname"]
-                    # 定义视频文件夹路径
-                    video_dir = path.join(download_path, video_upname, video_name)
-                    # 判断文件夹是否存在，不存在则创建
-                    if not path.exists(video_dir):
-                        makedirs(video_dir)
                     download_video(media_id,bvid,video_dir)
-                    print(f"[info] {"60"}秒后下载下一个视频")
-                    sleep(60)
+                    print(f"[info] {"30"}秒后下载下一个视频")
+                    sleep(30)
             # 对比已经下载的数据批量更新需要下载的数据
             for bvid in already_download_bvids(media_id):
                 try: # 如果need_download_bvids不存在该bvid表示已经更新过数据，直接跳过
                     need_download_bvids[media_id].remove(bvid)
                 except KeyError:
                     pass
-        print(f"[info] {interval}秒后执行下一轮")
-        sleep(interval)
+        print(f"[info] {30}分钟后更新并同步收藏夹")
+        sleep(1800)
 
 if __name__ == "__main__":
     init_download() # 第一次运行同步本地已经下载的视频信息
