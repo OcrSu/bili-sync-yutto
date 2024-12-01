@@ -37,8 +37,10 @@ services:
 
 ```toml
 #你的bilibili账号 Cookie
+[credential]
 sessdata = ""
-
+bili_jct = ""
+dedeuserid = ""
 #需要同步的收藏夹
 [favorite_list]
 <收藏夹id> = "<容器内保存的路径>"
