@@ -36,16 +36,8 @@ services:
 在运行程序前务必创建并配置好 配置文件，而且要放到正确的存储位置上，特指你在DockerCompose中 `{配置文件保存位置}`
 
 ```toml
-#扫描收藏夹更新的间隔时间（单位秒）
-interval = 3600
-
 #你的bilibili账号 Cookie
-[credential]
 sessdata = ""
-bili_jct = ""
-buvid3 = ""
-dedeuserid = ""
-ac_time_value = ""
 
 #需要同步的收藏夹
 [favorite_list]
@@ -53,18 +45,16 @@ ac_time_value = ""
 <收藏夹id> = "<容器内保存的路径>"
 ```
 
-- `interval`:表示程序每次执行扫描下载的间隔时间，单位为秒。
 - `credential`:哔哩哔哩账号的身份凭据，请参考凭据获取[流程获取](https://nemo2011.github.io/bilibili-api/#/get-credential)并对应填写至配置文件中，后续 bili-sync 会在必要时自动刷新身份凭据，不再需要手动管理。推荐使用匿名窗口获取，避免潜在的冲突。
 - `favorite_list`:你想要下载的收藏夹与想要保存的位置。简单示例：
 
 - `<收藏夹id> = "<容器内保存的路径>"`:视频会保存在容器内部的路径
 举例：
 ```bash
-interval = 3600
 [favorite_list]
 3115878158 = "/bili-sync/测试收藏夹"
 ```
-程序会每隔3600s对 ID为3115878158的收藏夹进行扫描，没有下载的视频将会下载到 容器内 "/bili-sync/测试收藏夹"目录下。
+程序会对 ID为3115878158的收藏夹进行扫描，没有下载的视频将会下载到 容器内 "/bili-sync/测试收藏夹"目录下。
 如果我想要将这个收藏夹的视频存储到容器外的指定位置，则需要在DockerCompose中挂载相应的目录。
 举例：
 
@@ -74,7 +64,7 @@ interval = 3600
 ```
 这样就可以将 
 
-`程序每隔3600s对 ID为3115878158的收藏夹进行扫描后，下载到 容器内 "/bili-sync/测试收藏夹"目录 的视频存储到容器外 /vol2/1000/Media 目录。`
+`程序对 ID为3115878158的收藏夹进行扫描后，下载到 容器内 "/bili-sync/测试收藏夹"目录 的视频存储到容器外 /vol2/1000/Media 目录。`
 
 <保存的路径>  和 ${还需要有视频下载位置} 可以根据自己的情况和习惯调整，没有特定要求
 
@@ -128,7 +118,7 @@ cd bili-sync-yutto
 # 安装依赖
 pip install -r requirements.txt
 # 运行代码
-python bili-sync-yutto.py
+python main.py
 ```
 
 
