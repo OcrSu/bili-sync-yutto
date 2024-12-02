@@ -13,6 +13,7 @@ with open(path.expanduser("~/.config/bili-sync/config.toml"), 'r', encoding='utf
 # 收藏夹的id列表
 media_id_list = list(bili_sync_config['favorite_list'].keys())
 credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bili_jct=bili_sync_config['credential']['bili_jct'], dedeuserid=bili_sync_config['credential']['dedeuserid'])
+sessdata=bili_sync_config['credential']['sessdata']
 # 需要下载的视频
 need_download_bvids = dict()
 
