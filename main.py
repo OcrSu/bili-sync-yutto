@@ -1,4 +1,4 @@
- from time import sleep
+from time import sleep
 from os import path
 from re import sub as sub
 from subprocess import CalledProcessError, run as subprocess_run
