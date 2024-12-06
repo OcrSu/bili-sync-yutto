@@ -4,10 +4,10 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-# 合并多个RUN命令到一个，并清理安装时产生的缓存
 RUN	apk add --no-cache git ffmpeg && \
 ln -s /root /app && \
-pip install --no-cache-dir -r requirements.txt && \
+pip install --no-cache-dir -r git+https://github.com/Nemo2011/bilibili-api.git@dev && \
+pip install -no-cache-dir git+https://github.com/yutto-dev/yutto@main && \
 rm -rf /var/cache/apk/
 
 CMD [ "python", "main.py" ]
