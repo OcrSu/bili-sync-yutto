@@ -82,8 +82,7 @@ def download_video(media_id,bvid,video_dir):
         "-n", 
         "1",
         "--no-color",
-        "--no-progress",
-        "--debug"
+        "--no-progress"
     ]
     try:
         subprocess_run(command, check=True)
