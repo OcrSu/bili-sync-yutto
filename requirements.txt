@@ -1,4 +1,4 @@
 toml
 # bilibili-api
-git+https://github.com/Nemo2011/bilibili-api.git@main  # 3.12版本的python使用这个命令安装模块
-git+https://github.com/yutto-dev/yutto.git@main
+git+https://github.com/Nemo2011/bilibili-api.git@dev
+git+https://github.com/yutto-dev/yutto@main
