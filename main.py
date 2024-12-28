@@ -81,8 +81,6 @@ def download_video(media_id,bvid,video_dir):
         "mirrorali",
         "-n", 
         "1",
-        "--no-color",
-        "--no-progress"
     ]
     try:
         subprocess_run(command, check=True)
