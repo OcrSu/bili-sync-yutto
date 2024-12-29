@@ -24,8 +24,6 @@ def refresh_cookie():
         sync(credential.refresh())
         bili_sync_config['credential']['sessdata'] = credential.sessdata
         bili_sync_config['credential']['bili_jct'] = credential.bili_jct
-        bili_sync_config['credential']['dedeuserid'] = credential.dedeuserid
-        bili_sync_config['credential']['ac_time_value'] = credential.ac_time_value
         save_cookies_to_txt()
 
 async def get_bvids(media_id):
