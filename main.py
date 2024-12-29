@@ -4,7 +4,7 @@ from re import sub as sub
 from subprocess import CalledProcessError, run as subprocess_run
 from asyncio import run as asyncio_run
 from toml import load
-from bilibili_api import Credential,video,favorite_list,settings
+from bilibili_api import Credential,video,favorite_list,settings,sync
 from load_data import SQLiteManager
 
 # 读取配置文件
@@ -16,6 +16,17 @@ credential = Credential(sessdata=bili_sync_config['credential']['sessdata'], bil
 sessdata = bili_sync_config['credential']['sessdata']
 # 需要下载的视频
 need_download_bvids = dict()
+
+# 自动刷新cookie
+def refresh_cookie():
+    if(sync(credential.check_refresh())):
+        print(f"[info] 发现cookie过期，正在刷新")
+        sync(credential.refresh())
+        bili_sync_config['credential']['sessdata'] = credential.sessdata
+        bili_sync_config['credential']['bili_jct'] = credential.bili_jct
+        bili_sync_config['credential']['dedeuserid'] = credential.dedeuserid
+        bili_sync_config['credential']['ac_time_value'] = credential.ac_time_value
+        save_cookies_to_txt()
 
 async def get_bvids(media_id):
     """
@@ -109,6 +120,7 @@ def init_download():
 # 间隔指定时间检查收藏夹是否更新并下载
 def check_updates_download():
     while True:
+        refresh_cookie() # 检测是否需要刷新cookie
         for media_id in media_id_list:
             # 根据收藏夹id读取配置文件中的保存路径
             download_path = bili_sync_config['favorite_list'][media_id]
