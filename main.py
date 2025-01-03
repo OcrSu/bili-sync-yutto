@@ -79,7 +79,7 @@ def download_video(media_id,bvid,video_dir):
     command = [
         "yutto",
         "-b", 
-        "-p",
+        "-p", "1~-1", 
         "-c", sessdata, 
         "-d", video_dir, 
         "-tp", "{name}", 
