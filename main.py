@@ -111,6 +111,13 @@ def already_download_bvids_add(media_id,bvid):
     with SQLiteManager(path.expanduser("~/.config/bili-sync/data.sqlite3")) as db_manager:
         db_manager.insert_data(table_name=media_id,value=bvid)
 
+
+def check_yutto():
+    command = [
+        "yutto",
+        "-v"
+    ]
+
 # 初始化
 def init_download():
     # 根据收藏夹id初始化字典数据
@@ -130,7 +137,7 @@ def check_updates_download():
             for bvid in need_download_bvids[media_id].copy(): 
             # 遍历的时候使用copy()方法创建副本，这样即使在迭代过程中修改了原集合，也不会影响到迭代器
                 video_info = asyncio_run(get_video_info(media_id,bvid)) # 获取视频信息
-                yutto -v
+                check_yutto()
                 if len(video_info)>0: # 仅下载可以获取到信息的视频
                     upname = video_info["upname"]
                     videotitle = video_info["title"]
